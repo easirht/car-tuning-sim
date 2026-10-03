@@ -55,6 +55,27 @@ Bayesian optimization written from scratch in plain JavaScript:
 
 The score is `lap time + a penalty if stability drops below 60`, so the AI cannot win with a fast but undriveable car.
 
+## Results
+
+Setup trade-offs (default setup, one parameter changed at a time):
+
+| Parameter | Values tried | Lap time |
+|---|---|---|
+| Downforce | 0 / 40 / 80 / 100 % | 88.0 / 80.4 / 82.1 / 84.0 s |
+| Gear ratio | 2.5 / 3.0 / 3.5 / 4.0 / 5.0 | 91.1 / 84.3 / 80.4 / 78.5 / 86.4 s |
+
+Both parameters have a clear sweet spot, so the optimizer has real trade-offs to resolve.
+
+**AI vs random search** (mean best lap score over independent 30-run trials, from a 10-trial headless test; the in-app comparison runs 20 trials, so exact numbers vary slightly):
+
+| After run | Bayesian optimization | Random search |
+|---|---|---|
+| 10 | 78.90 s | 80.19 s |
+| 20 | 77.87 s | 79.33 s |
+| 30 | 77.75 s | 78.63 s |
+
+Random search is competitive for the first few runs; the surrogate model pulls ahead once it has enough history. Use the **Run comparison** button in the app to reproduce this chart.
+
 ## Run locally
 
 No install needed. Open `index.html` in a browser, or serve the folder:
