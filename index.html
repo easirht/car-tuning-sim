@@ -27,6 +27,9 @@ button.alt{background:#2a3140}button:disabled{opacity:.5}
  <section>
   <div class="card"><div id="sliders"></div>
    <button id="run">▶ Run Lap</button><button id="sug" class="alt">AI Suggest</button><button id="auto" class="alt">AI Auto-Tune (30 runs)</button><button id="reset" class="alt">Reset</button></div>
+  <div class="card"><b>AI vs random search</b> <span class="rng">(mean best lap score over 20 independent trials)</span>
+   <canvas id="cmp" width="640" height="260"></canvas>
+   <button id="cmpbtn" class="alt" style="margin-top:8px">Run comparison</button> <span class="rng" id="cmpnote"></span></div>
   <div class="card"><div id="res"></div><p class="rng" id="note"></p></div>
  </section>
 </main>

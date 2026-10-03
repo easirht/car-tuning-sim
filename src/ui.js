@@ -67,5 +67,31 @@
       if (i < 30) setTimeout(loop, 40); else { apply(best.setup); play(record('AI')); busy = false; $('auto').disabled = false; } };
     loop();
   };
+  $('cmpbtn').onclick = () => {
+    if (busy) return; busy = true; $('cmpbtn').disabled = true;
+    const TR = 20, RUNS = 30, bo = [], rs = []; let t = 0;
+    const trial = () => {
+      const h = [], b = [], r = []; let bb = Infinity, rb = Infinity;
+      for (let i = 0; i < RUNS; i++) {
+        const s = Opt.suggest(h), sc = simulateLap(s).score; h.push({setup:s, score:sc}); bb = Math.min(bb, sc); b.push(bb);
+        rb = Math.min(rb, simulateLap(Opt.rnd()).score); r.push(rb);
+      }
+      bo.push(b); rs.push(r); $('cmpnote').textContent = `trial ${++t}/${TR}…`;
+      if (t < TR) setTimeout(trial, 0); else { drawCmp(bo, rs, RUNS); busy = false; $('cmpbtn').disabled = false; }
+    };
+    trial();
+  };
+  function drawCmp(bo, rs, n) {
+    const c = $('cmp'), g = c.getContext('2d'), w = c.width, h = c.height; g.clearRect(0,0,w,h);
+    const mean = (A,i) => A.reduce((a,x)=>a+x[i],0)/A.length;
+    const mb = Array.from({length:n},(_,i)=>mean(bo,i)), mr = Array.from({length:n},(_,i)=>mean(rs,i));
+    const lo = Math.min(...mb,...mr)-0.3, hi = Math.max(...mb,...mr)+0.3;
+    const X = i => 45+(w-60)*i/(n-1), Y = v => h-30-(h-50)*(v-lo)/(hi-lo);
+    g.font = '11px sans-serif'; g.fillStyle = '#8b94a5'; g.fillText(hi.toFixed(1)+' s',2,16); g.fillText(lo.toFixed(1)+' s',2,h-30); g.fillText('run #',w-40,h-8);
+    [[mr,'#8b94a5','Random search'],[mb,'#3ddc97','AI (Bayesian opt.)']].forEach(([m,col,name],k) => {
+      g.strokeStyle = col; g.lineWidth = 2.5; g.beginPath(); m.forEach((v,i)=>i?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v))); g.stroke();
+      g.fillStyle = col; g.fillText(`${name}: ${m[n-1].toFixed(2)} s`, 60, 18+k*14); });
+    $('cmpnote').textContent = `After ${n} runs the AI is ${(mr[n-1]-mb[n-1]).toFixed(2)} s faster on average.`;
+  }
   sync(); drawTrack(null);
 })();
